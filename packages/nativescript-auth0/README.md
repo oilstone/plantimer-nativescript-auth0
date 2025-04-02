@@ -1,7 +1,7 @@
-# @plantimer/nativescript-auth0
+# @oilstone/plantimer-nativescript-auth0
 
 ```bash
-npm install @plantimer/nativescript-auth0
+npm install @oilstone/plantimer-nativescript-auth0
 ```
 
 ## How does it work ?
@@ -24,7 +24,7 @@ This plugin uses the [InAppBrowser](https://github.com/proyecto26/nativescript-i
 ### Vanilla
 
 ```js
-import { Auth0 } from '@plantimer/nativescript-auth0';
+import { Auth0 } from '@oilstone/plantimer-nativescript-auth0';
 
 const config = {
   auth0Config: {
@@ -47,7 +47,7 @@ Auth0.setUp(config).getAccessToken();
 
 ```typescript
 // *.component.ts
-import { NativescriptAuth0 } from '@plantimer/nativescript-auth0';
+import { NativescriptAuth0 } from '@oilstone/plantimer-nativescript-auth0';
 
 @Component({
   selector: 'ns-app',
@@ -86,4 +86,4 @@ If you have any ideas, issues or security concerns, please open an issue !
 
 ## License
 
-This repository is available under the [MIT License](https://github.com/plantimer/nativescript-plugins/blob/main/LICENSE).
+This repository is available under the [MIT License](https://github.com/oilstone/plantimer-nativescript-plugins/blob/main/LICENSE).

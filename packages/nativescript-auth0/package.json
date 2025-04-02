@@ -1,7 +1,7 @@
 {
-  "name": "@plantimer/nativescript-auth0",
-  "version": "1.1.1",
-  "description": "Plugin wrapper for Auth0. It uses InAppBrowser and SecureStorage to safely authenticate users.",
+  "name": "@oilstone/plantimer-nativescript-auth0",
+  "version": "0.0.0",
+  "description": "Fork of @plantimer/nativescript-auth0 plugin wrapper for Auth0. It uses InAppBrowser and SecureStorage to safely authenticate users.",
   "main": "index",
   "typings": "index.d.ts",
   "nativescript": {
@@ -29,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/plantimer/nativescript-plugins.git"
+    "url": "https://github.com/oilstone/plantimer-nativescript-plugins.git"
   },
   "keywords": [
     "InAppBrowser",
@@ -42,11 +42,18 @@
     "name": "Joseph Martell",
     "email": "contact@josephmartell.com"
   },
+  "contributors": [
+    {
+      "name": "Online Solutions Ltd.",
+      "email": "support@onlinesolutionsltd.com",
+      "url": "https://www.onlinesolutionsltd.com/"
+    }
+  ],
   "bugs": {
-    "url": "https://github.com/plantimer/nativescript-plugins/issues"
+    "url": "https://github.com/oilstone/plantimer-nativescript-plugins/issues"
   },
   "license": "Apache-2.0",
-  "homepage": "https://github.com/plantimer/nativescript-plugins",
+  "homepage": "https://github.com/oilstone/plantimer-nativescript-plugins",
   "readmeFilename": "README.md",
   "bootstrapper": "@nativescript/plugin-seed"
 }
