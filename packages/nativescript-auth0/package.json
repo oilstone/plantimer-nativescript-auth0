@@ -1,6 +1,6 @@
 {
   "name": "@oilstone/plantimer-nativescript-auth0",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Fork of @plantimer/nativescript-auth0 plugin wrapper for Auth0. It uses InAppBrowser and SecureStorage to safely authenticate users.",
   "main": "index",
   "typings": "index.d.ts",
