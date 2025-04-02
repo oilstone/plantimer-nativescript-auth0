@@ -18,6 +18,7 @@ export class DemoAuth0ViewModel extends DemoSharedNativescriptAuth0 {
   };
 
   accessToken = '';
+  isLoggedIn = false;
 
   async signUp() {
     const nsAuth0 = new Auth0().setUp(this.config);
@@ -33,6 +34,10 @@ export class DemoAuth0ViewModel extends DemoSharedNativescriptAuth0 {
 
   async getAccessToken() {
     this.accessToken = await new Auth0().setUp(this.config).getAccessToken();
+  }
+
+  async loggedIn() {
+    this.isLoggedIn = await new Auth0().setUp(this.config).loggedIn();
   }
 
   logOut() {
@@ -58,5 +63,6 @@ export class DemoAuth0ViewModel extends DemoSharedNativescriptAuth0 {
   logData() {
     console.log('config', this.config);
     console.log('accessToken', this.accessToken);
+    console.log('isLoggedIn', this.isLoggedIn);
   }
 }

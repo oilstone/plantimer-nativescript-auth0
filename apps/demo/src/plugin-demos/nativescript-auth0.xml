@@ -20,6 +20,7 @@
       <Button text="Sign in" tap="{{ signIn }}" class="btn btn-primary"/>
       <Button text="Logout" tap="{{ logOut }}" class="btn btn-primary"/>
       <Button text="Get access token" tap="{{ getAccessToken }}" class="btn btn-primary"/>
+      <Button text="Is logged in?" tap="{{ loggedIn }}" class="btn btn-primary"/>
 
       <Label text="Access token:"/>
       <Label text="{{ accessToken }}" />
