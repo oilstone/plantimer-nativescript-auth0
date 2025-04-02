@@ -52,7 +52,7 @@ auth0.setUp(config).logOut();
 
 ```typescript
 // *.component.ts
-import { NativescriptAuth0 } from '@oilstone/plantimer-nativescript-auth0';
+import { Auth0 } from '@oilstone/plantimer-nativescript-auth0';
 
 @Component({
   selector: 'ns-app',

@@ -55,17 +55,17 @@ module.exports = {
       },
     },
     '⚙️': {
-      script: `npx cowsay "@plantimer/* packages will keep your ⚙️ cranking"`,
-      description: '_____________  @plantimer/*  _____________',
+      script: `npx cowsay "@oilstone/* packages will keep your ⚙️ cranking"`,
+      description: '_____________  @oilstone/*  _____________',
     },
     // packages
     // build output is always in dist/packages
-    '@plantimer': {
-      // @plantimer/nativescript-auth0
+    '@oilstone': {
+      // @oilstone/plantimer-nativescript-auth0
       'nativescript-auth0': {
         build: {
           script: 'nx run nativescript-auth0:build.all',
-          description: '@plantimer/nativescript-auth0: Build',
+          description: '@oilstone/plantimer-nativescript-auth0: Build',
         },
       },
       'build-all': {
@@ -80,10 +80,10 @@ module.exports = {
     focus: {
       'nativescript-auth0': {
         script: 'nx run nativescript-auth0:focus',
-        description: 'Focus on @plantimer/nativescript-auth0',
+        description: 'Focus on @oilstone/plantimer-nativescript-auth0',
       },
       reset: {
-        script: 'nx g @plantimer/plugin-tools:focus-packages',
+        script: 'nx g @oilstone/plantimer-plugin-tools:focus-packages',
         description: 'Reset Focus',
       },
     },

@@ -1,6 +1,6 @@
 import { EventData, Page } from '@nativescript/core';
 import { DemoSharedNativescriptAuth0 } from '@demo/shared';
-import { Config, Auth0 } from '@plantimer/nativescript-auth0';
+import { Config, Auth0 } from '@oilstone/plantimer-nativescript-auth0';
 
 export function navigatingTo(args: EventData) {
   const page = <Page>args.object;

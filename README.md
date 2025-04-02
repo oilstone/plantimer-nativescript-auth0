@@ -1,3 +1,3 @@
-# @plantimer/\* plugins
+# @oilstone/\* plugins
 
-- [@plantimer/nativescript-auth0](packages/nativescript-auth0/README.md)
+- [@oilstone/plantimer-nativescript-auth0](packages/nativescript-auth0/README.md)

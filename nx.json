@@ -1,5 +1,5 @@
 {
-  "npmScope": "plantimer",
+  "npmScope": "oilstone",
   "affected": {
     "defaultBase": "master"
   },
