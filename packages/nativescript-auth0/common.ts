@@ -46,6 +46,28 @@ export class Auth0Common extends Observable {
     return this;
   }
 
+  async loggedIn(): Promise<boolean> {
+    if (ApplicationSettings.hasKey('@plantimer/auth0_user_logged_in')) {
+      return ApplicationSettings.getBoolean('@plantimer/auth0_user_logged_in');
+    }
+
+    let isLoggedIn = false;
+
+    try {
+      const hasToken = await this.getAccessToken();
+
+      isLoggedIn = !!hasToken;
+
+      if (isLoggedIn) {
+        ApplicationSettings.setBoolean('@plantimer/auth0_user_logged_in', true);
+      }
+    } catch (error) {
+      // Treat this as not logged in
+    }
+
+    return isLoggedIn;
+  }
+
   async signIn(loginHint = ''): Promise<boolean> {
     try {
       const code = await this.fetchCodeInAppBrowser(this.prepareSignInAuthUrl(loginHint));
@@ -55,10 +77,7 @@ export class Auth0Common extends Observable {
 
       await this.fetchRefreshToken(code, this.verifier);
     } catch (e) {
-      const secureStorage = new SecureStorage();
-      secureStorage.removeSync({ key: '@plantimer/auth0_refresh_token' });
-      secureStorage.removeSync({ key: '@plantimer/auth0_access_token' });
-      ApplicationSettings.remove('@plantimer/auth0_access_token_expire');
+      this.clearStorage();
 
       throw new Auth0Error('Error during sign in', {
         additionalInfo: 'Every token has been deleted from the device.',
@@ -94,12 +113,7 @@ export class Auth0Common extends Observable {
         Utils.openUrl(logout);
       }
 
-      const secureStorage = new SecureStorage();
-      secureStorage.removeSync({ key: '@plantimer/auth0_refresh_token' });
-      secureStorage.removeSync({ key: '@plantimer/auth0_access_token' });
-
-      ApplicationSettings.remove('@plantimer/auth0_access_token_expire');
-      this.accessToken$.next('');
+      this.clearStorage();
 
       return true;
     } catch (e) {
@@ -268,5 +282,15 @@ export class Auth0Common extends Observable {
     }
 
     return false;
+  }
+
+  private clearStorage() {
+    const secureStorage = new SecureStorage();
+    secureStorage.removeSync({ key: '@plantimer/auth0_refresh_token' });
+    secureStorage.removeSync({ key: '@plantimer/auth0_access_token' });
+    ApplicationSettings.remove('@plantimer/auth0_access_token_expire');
+    ApplicationSettings.remove('@plantimer/auth0_user_info');
+    ApplicationSettings.remove('@plantimer/auth0_user_logged_in');
+    this.accessToken$.next('');
   }
 }

@@ -26,21 +26,26 @@ This plugin uses the [InAppBrowser](https://github.com/proyecto26/nativescript-i
 ```js
 import { Auth0 } from '@oilstone/plantimer-nativescript-auth0';
 
+const auth0 = new Auth0();
+
 const config = {
   auth0Config: {
-    domain: 'mydomain.auth0.com', // Domain name given by Auth0 or your own domain if you have a paid plan
-    clientId: 'ClIenTiDgIvEnByAuTh0', // Client ID given by Auth0
-    audience: 'https://your.audience.com', // Often a URL
-    redirectUri: 'schema:///', // The app's schema (set in AndroidManifest.xml and Info.plist)
+    domain: 'ADD_AUTH0_DOMAIN', // Domain name given by Auth0 or your own domain if you have a paid plan
+    clientId: 'ADD_AUTH0_CLIENT_ID', // Client ID given by Auth0
+    audience: 'ADD_AUTH0_AUDIENCE', // Often a URL
+    redirectUri: 'ADD_SCHEMA://auth/callback', // The app's schema (set in AndroidManifest.xml and Info.plist)
+    scope: 'openid profile email offline_access', // Auth0 scopes desired for the application
   },
   browserConfig: {
     // InAppBrowser configuration
   }
 }
 
-Auth0.setUp(config).signUp("email@provider.com"); // Optional hint to pre-fill the email field
-Auth0.setUp(config).signIn();
-Auth0.setUp(config).getAccessToken();
+auth0.setUp(config).signUp("email@provider.com"); // Optional hint to pre-fill the email field
+auth0.setUp(config).signIn();
+auth0.setUp(config).getAccessToken();
+auth0.setUp(config).loggedIn();
+auth0.setUp(config).logOut();
 ```
 
 ### Angular Example
@@ -57,10 +62,11 @@ export class AppComponent {
   login() {
     const config = {
       auth0Config: {
-        domain: 'mydomain.auth0.com', // Domain name given by Auth0 or your own domain if you have a paid plan
-        clientId: 'ClIenTiDgIvEnByAuTh0', // Client ID given by Auth0
-        audience: 'https://your.audience.com', // Often a URL
-        redirectUri: 'schema:///', // The app's schema (set in AndroidManifest.xml and Info.plist)
+        domain: 'ADD_AUTH0_DOMAIN', // Domain name given by Auth0 or your own domain if you have a paid plan
+        clientId: 'ADD_AUTH0_CLIENT_ID', // Client ID given by Auth0
+        audience: 'ADD_AUTH0_AUDIENCE', // Often a URL
+        redirectUri: 'ADD_SCHEMA://auth/callback', // The app's schema (set in AndroidManifest.xml and Info.plist)
+        scope: 'openid profile email offline_access', // Auth0 scopes desired for the application
       },
       browserConfig: {
         // InAppBrowser configuration
@@ -70,6 +76,8 @@ export class AppComponent {
     Auth0.setUp(config).signUp("email@provider.com"); // Optional hint to pre-fill the email field
     Auth0.setUp(config).signIn();
     Auth0.setUp(config).getAccessToken();
+    Auth0.setUp(config).loggedIn();
+    Auth0.setUp(config).logOut();
   }
 }
 ```
