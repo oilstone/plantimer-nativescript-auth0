@@ -101,7 +101,7 @@ export class Auth0Common extends Observable {
 
   async logOut(): Promise<boolean> {
     const returnTo = this.config.auth0Config.redirectUri;
-    const logout = 'https://' + this.config.auth0Config.domain + '/v2/logout?client_id=' + this.config.auth0Config.clientId;
+    const logout = this.prepareLogOutAuthUrl();
 
     try {
       if (await InAppBrowser.isAvailable()) {
@@ -271,6 +271,10 @@ export class Auth0Common extends Observable {
     const challenge: string = Base64.stringify(SHA256(this.verifier)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
     return `https://${this.config.auth0Config.domain}/authorize?audience=${this.config.auth0Config.audience}&scope=offline_access%20openid%20profile%20email&response_type=code&client_id=${this.config.auth0Config.clientId}&redirect_uri=${this.config.auth0Config.redirectUri}&code_challenge=${challenge}&code_challenge_method=S256&login_hint=${loginHint}`;
+  }
+
+  private prepareLogOutAuthUrl(): string {
+    return `https://${this.config.auth0Config.domain}/v2/logout?client_id=${this.config.auth0Config.clientId}&returnTo=${this.config.auth0Config.redirectUri}`;
   }
 
   private async fetchCodeInAppBrowser(authorizeUrl: string): Promise<string | false> {
