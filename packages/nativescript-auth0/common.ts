@@ -270,7 +270,7 @@ export class Auth0Common extends Observable {
   private prepareSignInAuthUrl(loginHint: string | null = null, connection: string | null = null, screenHint: string | null = null): string {
     const challenge: string = Base64.stringify(SHA256(this.verifier)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-    const urlParams = new URLSearchParams({
+    const params: Record<string, string> = {
       audience: this.config.auth0Config.audience,
       scope: this.config.auth0Config.scope || 'offline_access openid profile email',
       response_type: 'code',
@@ -278,16 +278,25 @@ export class Auth0Common extends Observable {
       redirect_uri: this.config.auth0Config.redirectUri,
       code_challenge: challenge,
       code_challenge_method: 'S256',
-      screen_hint: screenHint,
-      connection: connection,
-      login_hint: loginHint,
-    });
+    };
 
-    for (const [key, value] of urlParams.entries()) {
-      if (!value) {
-        urlParams.delete(key);
-      }
+    if (loginHint) {
+      params.login_hint = loginHint;
     }
+    if (connection) {
+      params.connection = connection;
+    }
+    if (screenHint) {
+      params.screen_hint = screenHint;
+    }
+
+    if (!params.audience || !params.client_id || !params.redirect_uri) {
+      console.error('Auth0 configuration is missing required fields (audience, client_id, redirect_uri)', this.config.auth0Config);
+
+      throw new Error('Auth0 configuration is missing required fields.');
+    }
+
+    const urlParams = new URLSearchParams(params);
 
     return `https://${this.config.auth0Config.domain}/authorize?${urlParams.toString()}`;
   }
