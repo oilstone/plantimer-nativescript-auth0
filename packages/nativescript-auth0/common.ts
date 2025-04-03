@@ -40,7 +40,7 @@ export class Auth0Common extends Observable {
     this.verifier = Auth0Common.getRandomValues(32);
 
     if (isAndroid) {
-      InAppBrowser.mayLaunchUrl(this.prepareSignInAuthUrl(''), []);
+      InAppBrowser.mayLaunchUrl(this.prepareSignInAuthUrl(), []);
     }
 
     return this;
@@ -68,9 +68,10 @@ export class Auth0Common extends Observable {
     return isLoggedIn;
   }
 
-  async signIn(loginHint = ''): Promise<boolean> {
+  async signIn(loginHint: string | null = null, connection: string | null = null): Promise<boolean> {
     try {
-      const code = await this.fetchCodeInAppBrowser(this.prepareSignInAuthUrl(loginHint));
+      const code = await this.fetchCodeInAppBrowser(this.prepareSignInAuthUrl(loginHint, connection));
+
       if (!code) {
         return false;
       }
@@ -88,8 +89,9 @@ export class Auth0Common extends Observable {
     return true;
   }
 
-  async signUp(loginHint = ''): Promise<boolean> {
+  async signUp(loginHint: string | null = null): Promise<boolean> {
     const code = await this.fetchCodeInAppBrowser(this.prepareSignUpAuthUrl(loginHint));
+
     if (!code) {
       return false;
     }
@@ -261,20 +263,42 @@ export class Auth0Common extends Observable {
     return refreshToken;
   }
 
-  private prepareSignUpAuthUrl(loginHint: string): string {
-    const challenge: string = Base64.stringify(SHA256(this.verifier)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-
-    return `https://${this.config.auth0Config.domain}/authorize?audience=${this.config.auth0Config.audience}&scope=offline_access%20openid%20profile%20email&response_type=code&client_id=${this.config.auth0Config.clientId}&redirect_uri=${this.config.auth0Config.redirectUri}&code_challenge=${challenge}&code_challenge_method=S256&login_hint=${loginHint}&screen_hint=signup`;
+  private prepareSignUpAuthUrl(loginHint: string | null = null): string {
+    return this.prepareSignInAuthUrl(loginHint, null, 'signup');
   }
 
-  private prepareSignInAuthUrl(loginHint): string {
+  private prepareSignInAuthUrl(loginHint: string | null = null, connection: string | null = null, screenHint: string | null = null): string {
     const challenge: string = Base64.stringify(SHA256(this.verifier)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-    return `https://${this.config.auth0Config.domain}/authorize?audience=${this.config.auth0Config.audience}&scope=offline_access%20openid%20profile%20email&response_type=code&client_id=${this.config.auth0Config.clientId}&redirect_uri=${this.config.auth0Config.redirectUri}&code_challenge=${challenge}&code_challenge_method=S256&login_hint=${loginHint}`;
+    const urlParams = new URLSearchParams({
+      audience: this.config.auth0Config.audience,
+      scope: this.config.auth0Config.scope || 'offline_access openid profile email',
+      response_type: 'code',
+      client_id: this.config.auth0Config.clientId,
+      redirect_uri: this.config.auth0Config.redirectUri,
+      code_challenge: challenge,
+      code_challenge_method: 'S256',
+      screen_hint: screenHint,
+      connection: connection,
+      login_hint: loginHint,
+    });
+
+    for (const [key, value] of urlParams.entries()) {
+      if (!value) {
+        urlParams.delete(key);
+      }
+    }
+
+    return `https://${this.config.auth0Config.domain}/authorize?${urlParams.toString()}`;
   }
 
   private prepareLogOutAuthUrl(): string {
-    return `https://${this.config.auth0Config.domain}/v2/logout?client_id=${this.config.auth0Config.clientId}&returnTo=${this.config.auth0Config.redirectUri}`;
+    const urlParams = new URLSearchParams({
+      client_id: this.config.auth0Config.clientId,
+      returnTo: this.config.auth0Config.redirectUri,
+    });
+
+    return `https://${this.config.auth0Config.domain}/v2/logout?${urlParams.toString()}`;
   }
 
   private async fetchCodeInAppBrowser(authorizeUrl: string): Promise<string | false> {
