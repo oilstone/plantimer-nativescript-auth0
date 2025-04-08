@@ -270,7 +270,7 @@ export class Auth0Common extends Observable {
   private prepareSignInAuthUrl(loginHint: string | null = null, connection: string | null = null, screenHint: string | null = null): string {
     const challenge: string = Base64.stringify(SHA256(this.verifier)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-    const params: Record<string, string> = {
+    const params: Record<string, any> = {
       audience: this.config.auth0Config.audience,
       scope: this.config.auth0Config.scope || 'offline_access openid profile email',
       response_type: 'code',
@@ -278,17 +278,10 @@ export class Auth0Common extends Observable {
       redirect_uri: this.config.auth0Config.redirectUri,
       code_challenge: challenge,
       code_challenge_method: 'S256',
+      login_hint: loginHint || null,
+      connection: connection || null,
+      screen_hint: screenHint || null,
     };
-
-    if (loginHint) {
-      params.login_hint = loginHint;
-    }
-    if (connection) {
-      params.connection = connection;
-    }
-    if (screenHint) {
-      params.screen_hint = screenHint;
-    }
 
     if (!params.audience || !params.client_id || !params.redirect_uri) {
       console.error('Auth0 configuration is missing required fields (audience, client_id, redirect_uri)', this.config.auth0Config);
@@ -296,18 +289,22 @@ export class Auth0Common extends Observable {
       throw new Error('Auth0 configuration is missing required fields.');
     }
 
-    const urlParams = new URLSearchParams(Object.entries(params));
-
-    return `https://${this.config.auth0Config.domain}/authorize?${urlParams.toString()}`;
+    return `https://${this.config.auth0Config.domain}/authorize${this.objectToQueryParams(params)}`;
   }
 
   private prepareLogOutAuthUrl(): string {
-    const urlParams = new URLSearchParams({
+    const params = {
       client_id: this.config.auth0Config.clientId,
       returnTo: this.config.auth0Config.redirectUri,
-    });
+    };
 
-    return `https://${this.config.auth0Config.domain}/v2/logout?${urlParams.toString()}`;
+    if (!params.client_id || !params.returnTo) {
+      console.error('Auth0 configuration is missing required fields (client_id, returnTo)', this.config.auth0Config);
+
+      throw new Error('Auth0 configuration is missing required fields.');
+    }
+
+    return `https://${this.config.auth0Config.domain}/v2/logout${this.objectToQueryParams(params)}`;
   }
 
   private async fetchCodeInAppBrowser(authorizeUrl: string): Promise<string | false> {
@@ -329,5 +326,32 @@ export class Auth0Common extends Observable {
     ApplicationSettings.remove('@plantimer/auth0_user_info');
     ApplicationSettings.remove('@plantimer/auth0_user_logged_in');
     this.accessToken$.next('');
+  }
+
+  private objectToQueryParams(params: Record<string, any>): string {
+    // Filter out null and undefined values
+    const validParams = Object.entries(params).filter(([_, value]) => value !== null && value !== undefined);
+
+    if (validParams.length === 0) {
+      return '';
+    }
+
+    const queryString = validParams
+      .map(([key, value]) => {
+        // Handle different types of values
+        if (Array.isArray(value)) {
+          // For arrays, use the same key multiple times
+          return value.map((item) => `${encodeURIComponent(key)}=${encodeURIComponent(String(item))}`).join('&');
+        } else if (typeof value === 'object') {
+          // For objects, stringify them
+          return `${encodeURIComponent(key)}=${encodeURIComponent(JSON.stringify(value))}`;
+        } else {
+          // For primitive values
+          return `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`;
+        }
+      })
+      .join('&');
+
+    return `?${queryString}`;
   }
 }
