@@ -296,7 +296,7 @@ export class Auth0Common extends Observable {
       throw new Error('Auth0 configuration is missing required fields.');
     }
 
-    const urlParams = new URLSearchParams(params);
+    const urlParams = new URLSearchParams(Object.entries(params));
 
     return `https://${this.config.auth0Config.domain}/authorize?${urlParams.toString()}`;
   }
