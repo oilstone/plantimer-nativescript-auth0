@@ -308,7 +308,17 @@ export class Auth0Common extends Observable {
   }
 
   private async fetchCodeInAppBrowser(authorizeUrl: string): Promise<string | false> {
-    const response: AuthSessionResult = await InAppBrowser.openAuth(authorizeUrl, this.config.auth0Config.redirectUri);
+    let response: AuthSessionResult = await InAppBrowser.openAuth(authorizeUrl, this.config.auth0Config.redirectUri);
+
+    // Check if the response is a request to restart the authentication flow as a passwordless sign in
+    // WARNING - oilstone specific. Do not merge into non-main branches
+    if (response.type === 'success' && response.url?.includes('/passwordless')) {
+      const urlObj = new URL(response.url);
+      const params = new URLSearchParams(urlObj.search);
+      const loginHint = params.get('login_hint');
+
+      response = await InAppBrowser.openAuth(this.prepareSignInAuthUrl(loginHint, 'email'), this.config.auth0Config.redirectUri);
+    }
 
     if (response.type === 'success' && response.url) {
       // Split the string to obtain the code or the access token
